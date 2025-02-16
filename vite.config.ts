@@ -22,9 +22,6 @@ export default defineConfig({
       '/api': {
         target: 'http://localhost:3000', // URL de votre backend NestJS
         changeOrigin: true,
-        // rewrite: (path) => {
-        //   return path.replace(/^\/api/, '') // Supprime le préfixe /api
-        // }
       },
     },
   },

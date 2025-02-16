@@ -48,6 +48,13 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import { useAuthStore } from '@/stores/auth'
+import { useUserStore } from '@/stores/user'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+const authStore = useAuthStore()
+const userStore = useUserStore()
 
 // Variables réactives pour le formulaire
 const email = ref('')
@@ -71,7 +78,7 @@ const handleLogin = async () => {
   console.log('Password (hash):', hashedPassword)
 
   try {
-    const response = await fetch('/api/login', {
+    const response = await fetch('/api/auth/login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -84,6 +91,11 @@ const handleLogin = async () => {
 
     if (response.ok) {
       console.log('Connexion réussie')
+      const body = await response.json()
+
+      authStore.storageToken(body.access_token)
+
+      router.push('novels')
     } else {
       console.error('Erreur de connexion')
     }

@@ -1,18 +1,25 @@
 <script lang="ts" setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, reactive } from 'vue'
 import * as cheerio from 'cheerio'
 import * as pako from 'pako'
 import { useRoute } from 'vue-router'
 import * as sass from 'sass'
 import type { AnyNode } from 'domhandler'
+import { useUserStore } from '@/stores/user'
+import { useAuthStore } from '@/stores/auth'
+import FABOptions from '@/components/FABOptions.vue'
 
 const route = useRoute()
+const userStore = useUserStore()
+const authStore = useAuthStore()
 
 const novelBodyHtml = ref(``)
 const novelPTextContent = ref(``)
 
-const revealedChars = ref(1500)
+const revealedChars = ref(0)
 const appearingChars = 25
+
+const fontSize = ref(24)
 
 // Fonction pour révéler progressivement le texte tout en gardant la structure HTML
 const revealedHtml = computed(() => {
@@ -90,10 +97,26 @@ window.addEventListener('keydown', onKeyPress)
 onMounted(async () => {
   try {
     const id = route.params.id
-    const response = await fetch(`/api/novels/${id}`)
+    const response = await fetch(`/api/novels/${id}`, {
+      headers: {
+        Authorization: `Bearer ${authStore.token}`,
+      },
+    })
+
+    if (!response.ok) {
+      console.error('Erreur de connexion')
+      return
+    }
+
     const data = await response.json()
 
+    if (data.cursor === undefined) {
+      console.error('Cursor is not found in the response')
+    }
+
     console.log('data', data)
+
+    revealedChars.value = data.cursor
 
     const rawHtml = pako.ungzip(data.content.data, { to: 'string' })
     console.log('unzip', rawHtml)
@@ -142,7 +165,7 @@ function loadCSS(content: string) {
       background-color: unset;
       color: black;
       font-family: georgia;
-      font-size: 16px;
+      font-size: 24px;
       word-spacing: 2px; /* Ajoute 10px d'espace entre chaque mot */
       padding-bottom: 100px;
 
@@ -190,5 +213,10 @@ function loadCSS(content: string) {
 </script>
 
 <template>
-  <div v-html="revealedHtml" class="current-page dark-mode"></div>
+  <div
+    v-html="revealedHtml"
+    :style="{ fontSize: fontSize + 'px' }"
+    class="current-page dark-mode"
+  ></div>
+  <FABOptions v-model:fontSize="fontSize" />
 </template>

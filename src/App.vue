@@ -1,6 +1,6 @@
 <template>
   <div :class="{ dark: user.isDarkMode }">
-    <header class="fixed top-0 left-0 w-full z-50 dark:bg-black dark:text-white shadow-md p-4">
+    <header class="fixed top-0 left-0 w-full z-50 dark:bg-black dark:text-white shadow-md p-6">
       <nav class="container mx-auto flex justify-between items-center gap-5">
         <div class="flex [gap:inherit]">
           <router-link to="/">Home</router-link>
@@ -16,7 +16,7 @@
               :class="{ 'translate-x-6': user.isDarkMode, 'translate-x-0': !user.isDarkMode }"
             ></span>
           </button>
-          <router-link to="/signup">Signup</router-link>
+          <router-link to="/login">login</router-link>
         </div>
       </nav>
     </header>
@@ -35,9 +35,8 @@
 </style>
 
 <script setup lang="ts">
-import { ref } from 'vue'
 import { RouterLink, RouterView } from 'vue-router'
-import { useUserStore } from './stores/user'
+import { useAuthStore } from '@/stores/auth'
 
-const user = useUserStore()
+const user = useAuthStore()
 </script>

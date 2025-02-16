@@ -15,13 +15,13 @@
           />
         </div>
         <div>
-          <label for="pseudo" class="block text-sm font-medium">Pseudo</label>
+          <label for="username" class="block text-sm font-medium">username</label>
           <input
             type="text"
-            id="pseudo"
-            v-model="pseudo"
+            id="username"
+            v-model="username"
             class="w-full px-4 py-2 mt-1 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="Entrez votre pseudo"
+            placeholder="Entrez votre username"
             required
           />
         </div>
@@ -45,7 +45,7 @@
       </form>
       <p class="text-sm text-center">
         Déjà un compte ?
-        <a href="#" class="text-blue-500 hover:underline">Connectez-vous</a>
+        <a href="/login" class="text-blue-500 hover:underline">Connectez-vous</a>
       </p>
     </div>
   </div>
@@ -59,7 +59,7 @@ const router = useRouter()
 
 // Variables réactives pour les champs du formulaire
 const email = ref('')
-const pseudo = ref('')
+const username = ref('')
 const password = ref('')
 
 // Fonction pour hacher les données en SHA-256
@@ -88,7 +88,7 @@ const handleSignup = async () => {
       body: JSON.stringify({
         email: hashedEmail,
         password: hashedPassword,
-        pseudo: pseudo.value,
+        username: username.value,
       }),
     })
 
